@@ -1,4 +1,4 @@
-interface DogImage {
+export interface DogImage {
     id: string;
     breed: string;
     image: string;
