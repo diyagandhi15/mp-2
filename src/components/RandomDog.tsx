@@ -1,4 +1,3 @@
-// RandomDog.tsx
 import styled from "styled-components";
 import { DogImage } from "../interfaces/DogImage.ts";
 
@@ -29,10 +28,13 @@ const SingleDogDiv = styled.div`
     }
 `;
 
-// Define props type for RandomDog
-// interface RandomDogProps {
-//     data: DogImage[];  // Expecting an array of DogImage objects
-// }
+const BreedName = styled.h2`
+    font-family: 'Your Desired Font Family', sans-serif; // Specify your font family
+    font-size: 1.5rem; // Change the font size as needed
+    color: darkblue; // Change the text color as needed
+    // Add other styles as needed
+`;
+
 
 export default function RandomDog(props: {data: DogImage[]}) {
     return (
@@ -40,7 +42,7 @@ export default function RandomDog(props: {data: DogImage[]}) {
             {
                 props.data.map((char: DogImage) => (
                     <SingleDogDiv key={char.id}>
-                        <h2>{char.breed}</h2>
+                        <BreedName>{char.breed}</BreedName>
                         <img
                             src={char.image}
                             alt={`${char.breed}`}

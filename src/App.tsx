@@ -9,12 +9,17 @@ const ParentDiv = styled.div`
     text-align: center;
 `;
 
+const TitleText = styled.h2`
+    font-family: 'Your Desired Font Family', sans-serif; // Specify your font family
+    font-size: 1.5rem; // Change the font size as needed
+    color: darkblue; // Change the text color as needed
+    // Add other styles as needed
+`;
+
 export default function App() {
     
-    // useState Hook to store Data.
     const [data, setData] = useState<DogImage[]>([]);
 
-    // useEffect Hook for error handling and re-rendering.
     useEffect(() => {
         async function fetchData(): Promise<void> {
             try {
@@ -37,15 +42,29 @@ export default function App() {
     }, []);
 
     // Function to extract breed from image URL
+    // Used to derive the breed from the image URL, 
+    // The api used doesn't extract the breedn name automatically to display, 
+    // so it will have to be done manually
     const extractBreedFromUrl = (url: string): string => {
+        // Define a regular expression to find the breed name in the URL.
         const regex = /breeds\/([a-zA-Z0-9-]+)\//;
+    
+        // Use the regex to match against the provided URL and capture the breed name.
         const match = url.match(regex);
-        return match ? match[1].replace('-', ' ').toUpperCase() : "Unknown Breed";
+    
+        // Check if a match was found:
+        return match 
+            // If a match is found, process the captured breed name:
+            ? match[1]                  // Get the first captured group, which is the breed name.
+                .replace('-', ' ')      // Replace hyphens in the breed name with spaces.
+                .toUpperCase()          // Convert the breed name to uppercase.
+            // If no match was found, return a default value:
+            : "Unknown Breed";          // Return "Unknown Breed" if the URL does not contain a valid breed.
     };
 
     return (
         <ParentDiv>
-            <h1> Random Dog Generator</h1>
+            <TitleText> Random Dog Generator</TitleText>
             <RandomDog data={data} />
         </ParentDiv>
     );
