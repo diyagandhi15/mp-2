@@ -7,6 +7,7 @@ const AllDogsDiv = styled.div`
     justify-content: space-evenly;
     background-color: lightblue;
     border-radius: 20px;
+    text-align: center;
 `;
 
 const SingleDogDiv = styled.div`
@@ -19,7 +20,12 @@ const SingleDogDiv = styled.div`
     background-color: white;
     border-radius: 20px;
     text-align: center;
-    font: italic small-caps bold calc(2px + 1vw) "Georgia", serif;
+    font: italic calc(2px + 1vw) darkblue "Georgia", serif;
+    background-color: beige;
+    
+    h2 {
+        color: darkblue;
+    }
 
     img {
         max-width: 100%;
@@ -28,21 +34,15 @@ const SingleDogDiv = styled.div`
     }
 `;
 
-const BreedName = styled.h2`
-    font-family: 'Your Desired Font Family', sans-serif; // Specify your font family
-    font-size: 1.5rem; // Change the font size as needed
-    color: darkblue; // Change the text color as needed
-    // Add other styles as needed
-`;
-
 
 export default function RandomDog(props: {data: DogImage[]}) {
     return (
+
         <AllDogsDiv>
             {
                 props.data.map((char: DogImage) => (
                     <SingleDogDiv key={char.id}>
-                        <BreedName>{char.breed}</BreedName>
+                        <h2>{char.breed}</h2>
                         <img
                             src={char.image}
                             alt={`${char.breed}`}

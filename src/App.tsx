@@ -7,14 +7,13 @@ const ParentDiv = styled.div`
     width: 80vw;
     margin: auto;
     text-align: center;
+    font: calc(2px + 1vw) "Georgia", serif; 
+ 
+    h1 {
+        color: darkblue;
+    }
 `;
 
-const TitleText = styled.h2`
-    font-family: 'Your Desired Font Family', sans-serif; // Specify your font family
-    font-size: 1.5rem; // Change the font size as needed
-    color: darkblue; // Change the text color as needed
-    // Add other styles as needed
-`;
 
 export default function App() {
     
@@ -26,11 +25,25 @@ export default function App() {
                 const rawData = await fetch("https://dog.ceo/api/breeds/image/random/10");
                 const result = await rawData.json();
                 
+                // Initialize a Set to track unique image URLs
+                const uniqueImages = new Set<string>();
+
                 // Mapping the image URLs to include breed
-                const images = result.message.map((url: string) => {
+               // Filter the images to ensure no duplicates
+
+                const images = result.message
+                .filter((url: string) => {
+                    if (uniqueImages.has(url)) {
+                        return false; // Skip duplicate images
+                    }
+                    uniqueImages.add(url);
+                    return true;
+                })
+                .map((url: string) => {
                     const breed = extractBreedFromUrl(url);
                     return { id: url.split("/").pop() || `${Math.random()}`, breed, image: url };
                 });
+
                 
                 setData(images);
             } catch (error) {
@@ -41,30 +54,45 @@ export default function App() {
         fetchData();
     }, []);
 
-    // Function to extract breed from image URL
-    // Used to derive the breed from the image URL, 
-    // The api used doesn't extract the breedn name automatically to display, 
-    // so it will have to be done manually
-    const extractBreedFromUrl = (url: string): string => {
-        // Define a regular expression to find the breed name in the URL.
-        const regex = /breeds\/([a-zA-Z0-9-]+)\//;
-    
-        // Use the regex to match against the provided URL and capture the breed name.
-        const match = url.match(regex);
-    
-        // Check if a match was found:
-        return match 
-            // If a match is found, process the captured breed name:
-            ? match[1]                  // Get the first captured group, which is the breed name.
-                .replace('-', ' ')      // Replace hyphens in the breed name with spaces.
-                .toUpperCase()          // Convert the breed name to uppercase.
-            // If no match was found, return a default value:
-            : "Unknown Breed";          // Return "Unknown Breed" if the URL does not contain a valid breed.
-    };
+    // Function to extract and format the breed name from the image URL
+// Function to extract and format the breed name from the image URL
+const extractBreedFromUrl = (url: string): string => {
+    // Define a regular expression to find the breed name in the URL.
+    const regex = /breeds\/([a-zA-Z0-9-]+)\//;
+
+    // Use the regex to match against the provided URL and capture the breed name.
+    const match = url.match(regex);
+
+    // List of breeds where the order should not be reversed
+    // I noticed some exceptions when I kept calling the API
+    const exceptionBreeds = ["australian-shepherd"];
+
+    // Check if a match was found:
+    if (match) {
+        const breed = match[1]; // Get the breed part of the URL
+
+        // If the breed is in the exception list, return it as-is with proper formatting
+        if (exceptionBreeds.includes(breed)) {
+            return breed
+                .split('-') // Split the breed name by the hyphen
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
+                .join(' '); // Join the words back into a single string 
+        }
+
+        // Otherwise, reverse the breed name and return it
+        return breed
+            .split('-') // Split the breed name by the hyphen
+            .reverse()  // Reverse the order of the split parts
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) 
+            .join(' '); 
+    }
+
+    return "Unknown Breed"; // Return "Unknown Breed" if the URL does not contain a valid breed.
+};
 
     return (
         <ParentDiv>
-            <TitleText> Random Dog Generator</TitleText>
+            <h1> Random Dog Generator</h1>
             <RandomDog data={data} />
         </ParentDiv>
     );
