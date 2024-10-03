@@ -26,10 +26,12 @@ export default function App() {
                 const result = await rawData.json();
                 
                 // Initialize a Set to track unique image URLs
+                // Was testing and saw that sometimes when the page was refreshed 
+                // there would be multiple of the same dog image
                 const uniqueImages = new Set<string>();
 
                 // Mapping the image URLs to include breed
-               // Filter the images to ensure no duplicates
+                // Filter the images to ensure no duplicates
 
                 const images = result.message
                 .filter((url: string) => {
