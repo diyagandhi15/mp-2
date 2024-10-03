@@ -54,40 +54,46 @@ export default function App() {
         fetchData();
     }, []);
 
-    // Function to extract and format the breed name from the image URL
 // Function to extract and format the breed name from the image URL
+// Upon running the API in Postman I found that the interface returned was just the text, and a status
+// Had to create an interface and extract the breed from the URL where it is visible in order to display the text
 const extractBreedFromUrl = (url: string): string => {
-    // Define a regular expression to find the breed name in the URL.
-    const regex = /breeds\/([a-zA-Z0-9-]+)\//;
+    // Split the URL into parts based on the '/' delimiter
+    const parts = url.split('/');
 
-    // Use the regex to match against the provided URL and capture the breed name.
-    const match = url.match(regex);
+    // Find the index of 'breeds'
+    // URL contains 'breeds' and after / the actual breed name of the dog is provided
+    const breedIndex = parts.indexOf('breeds');
+
+    // Check if 'breeds' is found and has a next part
+    if (breedIndex !== -1 && breedIndex + 1 < parts.length) {
+        const breed = parts[breedIndex + 1]; // Get the breed part of the URL
 
     // List of breeds where the order should not be reversed
-    // I noticed some exceptions when I kept calling the API
+    // I noticed some exceptions when I kept calling the API, 
+    // not sure if there are any more but this exception was getting reversed 
+    // Shepherd Australian
     const exceptionBreeds = ["australian-shepherd"];
 
-    // Check if a match was found:
-    if (match) {
-        const breed = match[1]; // Get the breed part of the URL
-
-        // If the breed is in the exception list, return it as-is with proper formatting
-        if (exceptionBreeds.includes(breed)) {
-            return breed
-                .split('-') // Split the breed name by the hyphen
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
-                .join(' '); // Join the words back into a single string 
-        }
-
-        // Otherwise, reverse the breed name and return it
+    // If the breed is in the exception list, return it with proper formatting
+    if (exceptionBreeds.includes(breed)) {
         return breed
             .split('-') // Split the breed name by the hyphen
-            .reverse()  // Reverse the order of the split parts
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) 
-            .join(' '); 
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
+            .join(' '); // Join the words back into a single string 
     }
 
-    return "Unknown Breed"; // Return "Unknown Breed" if the URL does not contain a valid breed.
+    // Otherwise, reverse the breed name and return it
+    // In most of the URLs, the breed name is displayed as retriever-golden
+    // Reverse the breed name so it displays Golden Retriever
+    return breed
+        .split('-') // Split the breed name by the hyphen
+        .reverse() // Reverse the order of the split parts
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
+        .join(' '); // Join the words back into a single string
+    }
+
+    return "Unknown Breed"; // Return null if no breed is found
 };
 
     return (
